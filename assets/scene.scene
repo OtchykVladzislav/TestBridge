@@ -10,7 +10,7 @@
   },
   {
     "__type__": "cc.Scene",
-    "_name": "",
+    "_name": "scene",
     "_objFlags": 0,
     "_parent": null,
     "_children": [
@@ -19,6 +19,9 @@
       },
       {
         "__id__": 5
+      },
+      {
+        "__id__": 7
       }
     ],
     "_active": true,
@@ -53,9 +56,9 @@
     },
     "autoReleaseAssets": false,
     "_globals": {
-      "__id__": 7
+      "__id__": 8
     },
-    "_id": "f46876e4-e81b-4931-b493-6d367be385e7"
+    "_id": "371e9379-1833-48f8-abee-85bde2ab3916"
   },
   {
     "__type__": "cc.Node",
@@ -239,24 +242,64 @@
     "_id": "7dWQTpwS5LrIHnc1zAPUtf"
   },
   {
+    "__type__": "cc.Node",
+    "_name": "Bridge",
+    "_objFlags": 0,
+    "_parent": {
+      "__id__": 1
+    },
+    "_children": [],
+    "_active": true,
+    "_components": [],
+    "_prefab": null,
+    "_lpos": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_lrot": {
+      "__type__": "cc.Quat",
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "w": 1
+    },
+    "_lscale": {
+      "__type__": "cc.Vec3",
+      "x": 1,
+      "y": 1,
+      "z": 1
+    },
+    "_mobility": 0,
+    "_layer": 1073741824,
+    "_euler": {
+      "__type__": "cc.Vec3",
+      "x": 0,
+      "y": 0,
+      "z": 0
+    },
+    "_id": "betmHCPulDXKbkJHcW3gg1"
+  },
+  {
     "__type__": "cc.SceneGlobals",
     "ambient": {
-      "__id__": 8
-    },
-    "shadows": {
       "__id__": 9
     },
-    "_skybox": {
+    "shadows": {
       "__id__": 10
     },
-    "fog": {
+    "_skybox": {
       "__id__": 11
     },
-    "octree": {
+    "fog": {
       "__id__": 12
     },
-    "lightProbeInfo": {
+    "octree": {
       "__id__": 13
+    },
+    "lightProbeInfo": {
+      "__id__": 14
     },
     "bakedWithStationaryMainLight": false,
     "bakedWithHighpLightmap": false
