@@ -1,19 +1,25 @@
-import { _decorator, Component, Node, instantiate, Prefab, Vec3, RigidBody, math, HingeConstraint } from 'cc';
+import { _decorator, Component, Node, instantiate, Prefab, Vec3, RigidBody, math, HingeConstraint, Camera } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('BridgeController')
 export class BridgeController extends Component {
     @property(Prefab) bridgeSegmentPrefab: Prefab = null;
-    @property(Number) segmentCount: number = 10;
-    @property(Number) segmentSpacing: number = 2;
+    @property(Number) segmentCount: number = 150;
+    @property(Number) segmentSpacing: number = 1;
     @property(Number) waveAmplitude: number = 1;
-    @property(Number) waveFrequency: number = 1;
-    @property(Number) randomFactor: number = 0.5;
+    @property(Number) primaryWaveFrequency: number = 0.2; // Низкая частота для плавности
+    @property(Number) secondaryWaveAmplitude: number = 0.3; // Амплитуда вторичной волны
+    @property(Number) secondaryWaveFrequency: number = 0.05;
+    @property(Node) secondRoad: Node = null;
 
     public segments: Node[] = [];
 
     start() {
         this.buildBridge();
+
+        const distance = (this.node.children[this.node.children.length - 2].position.x * 1.25) - this.node.position.x
+
+        this.secondRoad.setPosition(this.secondRoad.position.x + distance, this.secondRoad.position.y, this.secondRoad.position.z)
     }
 
     buildBridge() {
@@ -23,13 +29,15 @@ export class BridgeController extends Component {
             this.node.addChild(segment);
 
             let x = i * this.segmentSpacing;
-            let y = Math.sin(i * this.waveFrequency) * this.waveAmplitude;
-            let z = Math.cos(i * this.waveFrequency) * this.waveAmplitude;
+            const primaryWave = Math.sin(i * this.primaryWaveFrequency) * this.waveAmplitude;
+            
+            // Вторичная медленная волна для изменения размера
+            const sizeVariation = 1 + Math.sin(i * this.secondaryWaveFrequency) * this.secondaryWaveAmplitude;
+            
+            // Комбинированная высота
+            const y = primaryWave * sizeVariation;
 
-            y += math.randomRange(-this.randomFactor, this.randomFactor);
-            z += math.randomRange(-this.randomFactor, this.randomFactor);
-
-            segment.setPosition(new Vec3(x, y, z));
+            segment.setPosition(new Vec3(x, y, segment.position.z));
             
             if (prevSegment) {
                 let joint = segment.addComponent(HingeConstraint);

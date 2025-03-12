@@ -1,38 +1,47 @@
-import { _decorator, Component, RigidBody, Vec3, Collider, HingeConstraint } from 'cc';
+import { _decorator, Component, RigidBody, Vec3, Collider, HingeConstraint, ERigidBodyType, MeshRenderer, isValid } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('BridgeSegment')
 export class BridgeSegment extends Component {
     @property(RigidBody) rigidBody: RigidBody = null;
     @property(HingeConstraint) joint: HingeConstraint = null;
-    @property({ type: Number }) breakThreshold: number = 5; // Порог разрушения
-
-    private isBroken: boolean = false;
+    @property({ type: Number }) destroyDelay: number = 3; // Время до разрушения
+    
+    private isTriggered: boolean = false;
+    private isDestroyed: boolean = false;
 
     onLoad() {
         const collider = this.getComponent(Collider);
-        if (collider) {
-            collider.on('onCollisionEnter', this.onCollision, this);
-        }
+        collider?.on('onCollisionEnter', this.onFirstTouch, this);
     }
 
-    onCollision(event: any) {
-        if (this.isBroken) return;
+    onFirstTouch() {
+        if (this.isTriggered) return;
+        this.isTriggered = true;
 
-        const impactForce = event.otherCollider.getComponent(RigidBody)?.getLinearVelocity().length() || 0;
-        if (impactForce > this.breakThreshold) {
-            this.breakSegment();
-        }
+        this.scheduleOnce(() => this.destroySegment(), this.destroyDelay);
     }
 
-    breakSegment() {
-        if (this.isBroken) return;
-        this.isBroken = true;
+    destroySegment() {
+        if (this.isDestroyed) return;
+        console.log(55)
+        this.isDestroyed = true;
 
-        if (this.joint) {
-            this.joint.destroy(); // Разрываем соединение
+        // Удаляем соединение
+        if (isValid(this.joint)) {
+            this.joint.destroy();
+            this.joint = null!;
         }
 
-        this.rigidBody.applyImpulse(new Vec3(Math.random() * 2 - 1, 2, Math.random() * 2 - 1)); // Разбрасываем обломки
+        // Активируем физику
+        if (isValid(this.rigidBody)) {
+            this.rigidBody.type = ERigidBodyType.DYNAMIC;
+            this.rigidBody.wakeUp(); // Используем прямой метод
+        }
+
+        // Удаление через 5 секунд
+        this.scheduleOnce(() => {
+            isValid(this.node) && this.node.destroy();
+        }, 5);
     }
 }

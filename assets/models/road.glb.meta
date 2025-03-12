@@ -1,0 +1,93 @@
+{
+  "ver": "2.3.4",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "083a2e26-502b-4ff1-94bd-0249cf17bbec",
+  "files": [],
+  "subMetas": {
+    "99380": {
+      "importer": "gltf-material",
+      "uuid": "083a2e26-502b-4ff1-94bd-0249cf17bbec@99380",
+      "displayName": "",
+      "id": "99380",
+      "name": "Material.001.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "2e9a4": {
+      "importer": "gltf-mesh",
+      "uuid": "083a2e26-502b-4ff1-94bd-0249cf17bbec@2e9a4",
+      "displayName": "",
+      "id": "2e9a4",
+      "name": "Road_platform.mesh",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "6cef6": {
+      "importer": "gltf-mesh",
+      "uuid": "083a2e26-502b-4ff1-94bd-0249cf17bbec@6cef6",
+      "displayName": "",
+      "id": "6cef6",
+      "name": "finish.mesh",
+      "userData": {
+        "gltfIndex": 1
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "09d61": {
+      "importer": "gltf-scene",
+      "uuid": "083a2e26-502b-4ff1-94bd-0249cf17bbec@09d61",
+      "displayName": "",
+      "id": "09d61",
+      "name": "road.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "redirect": "083a2e26-502b-4ff1-94bd-0249cf17bbec@09d61",
+    "assetFinder": {
+      "meshes": [
+        "083a2e26-502b-4ff1-94bd-0249cf17bbec@2e9a4",
+        "083a2e26-502b-4ff1-94bd-0249cf17bbec@6cef6"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [
+        "083a2e26-502b-4ff1-94bd-0249cf17bbec@99380"
+      ],
+      "scenes": [
+        "083a2e26-502b-4ff1-94bd-0249cf17bbec@09d61"
+      ]
+    }
+  }
+}

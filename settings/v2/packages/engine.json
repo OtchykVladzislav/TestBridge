@@ -15,10 +15,10 @@
         "_value": false
       },
       "animation": {
-        "_value": false
+        "_value": true
       },
       "skeletal-animation": {
-        "_value": false
+        "_value": true
       },
       "3d": {
         "_value": true
@@ -68,7 +68,7 @@
         "_value": true
       },
       "profiler": {
-        "_value": true
+        "_value": false
       },
       "occlusion-query": {
         "_value": false
@@ -126,13 +126,14 @@
     "includeModules": [
       "2d",
       "3d",
+      "animation",
       "audio",
       "base",
       "gfx-webgl",
       "particle",
       "physics-cannon",
       "primitive",
-      "profiler",
+      "skeletal-animation",
       "tween",
       "ui"
     ],
@@ -140,5 +141,8 @@
       "value": false,
       "version": ""
     }
+  },
+  "macroConfig": {
+    "ENABLE_ANTIALIAS_FXAA": false
   }
 }

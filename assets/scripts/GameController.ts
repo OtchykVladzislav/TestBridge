@@ -1,66 +1,65 @@
-import { _decorator, Component, Node, Prefab, instantiate } from 'cc';
+import { _decorator, AudioSource, Component, input, Input, Node, tween, UIOpacity, Vec3 } from 'cc';
 import { CarController } from './CarController';
 import { BridgeController } from './BridgeController';
+import { Target } from '../main/Target';
+import { SoundManager } from './SoundManager';
 
 const { ccclass, property } = _decorator;
 
 @ccclass('GameController')
 export class GameController extends Component {
-    @property(Prefab) carPrefab: Prefab = null;
-    @property(Prefab) bridgePrefab: Prefab = null;
-    @property(Node) carStartPosition: Node = null;
-    @property(Node) bridgeStartPosition: Node = null;
+    @property(SoundManager)
+    soundManager : SoundManager;
 
-    private car: Node = null;
-    private bridge: Node = null;
-    private carController: CarController = null;
-    private bridgeController: BridgeController = null;
+    @property(Node)
+    ui: Node = null
 
-    start() {
-        this.spawnBridge();
-        this.spawnCar();
-    }
+    @property(Node)
+    ui_cta: Node = null
 
-    spawnBridge() {
-        this.bridge = instantiate(this.bridgePrefab);
-        this.node.addChild(this.bridge);
-        this.bridge.setPosition(this.bridgeStartPosition.position);
-        this.bridgeController = this.bridge.getComponent(BridgeController);
-    }
+    @property(Node)
+    handler: Node = null
+    
+    soundSource = new AudioSource();
 
-    spawnCar() {
-        this.car = instantiate(this.carPrefab);
-        this.node.addChild(this.car);
-        this.car.setPosition(this.carStartPosition.position);
-        this.carController = this.car.getComponent(CarController);
-    }
-
-    update(deltaTime: number) {
-        if (this.carController && this.bridgeController) {
-            this.checkBridgeCollapse();
-        }
-    }
-
-    checkBridgeCollapse() {
-        const carPos = this.car.position;
-        const segmentIndex = Math.floor(carPos.x / this.bridgeController.segmentSpacing);
+    start(){
+        this.soundSource.loop = true
+        this.soundSource.clip = this.soundManager.soundBgSound
         
-        if (segmentIndex < this.bridgeController.segments.length) {
-            this.bridgeController.destroyBridgeSegment(segmentIndex);
-        }
-
-        if (this.car.position.y < -5) {
-            console.log('end')
-            //this.restartGame();
-        }
+        this.handler.on(Node.EventType.TOUCH_START, this.firstTouch, this)
     }
 
-    restartGame() {
-        this.car.destroy();
-        this.bridge.destroy();
-        this.scheduleOnce(() => {
-            this.spawnBridge();
-            this.spawnCar();
-        }, 1);
+    firstTouch(){
+        this.soundSource.play()
+
+        this.handler.off(Node.EventType.TOUCH_START, this.firstTouch, this)
+    }
+
+    transferToCTA(){
+        const start_screen = this.ui.getComponent(UIOpacity)
+        const end_screen = this.ui_cta.getComponent(UIOpacity)
+        const target = this.node.getComponent(Target)
+        const button_cta = this.ui_cta.getChildByPath('ButtonContainer')
+
+        this.soundManager.playMusic(this.soundManager.failSound)
+
+        end_screen.enabled = true
+
+        target.game_end()
+
+        tween(start_screen)
+        .to(0.3, {opacity: 0})
+        .start()
+
+        tween(end_screen)
+        .to(0.3, {opacity: 255})
+        .start()
+
+        tween(button_cta)
+        .to(0.5, {scale: new Vec3(0.8, 0.8, 0.8)})
+        .to(0.5, {scale: new Vec3(1, 1, 1)})
+        .union()
+        .repeatForever()
+        .start()
     }
 }

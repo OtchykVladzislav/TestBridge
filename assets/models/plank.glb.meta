@@ -1,0 +1,75 @@
+{
+  "ver": "2.3.4",
+  "importer": "gltf",
+  "imported": true,
+  "uuid": "200231c4-c489-4259-82de-4b9ad7fb10e3",
+  "files": [],
+  "subMetas": {
+    "99380": {
+      "importer": "gltf-material",
+      "uuid": "200231c4-c489-4259-82de-4b9ad7fb10e3@99380",
+      "displayName": "",
+      "id": "99380",
+      "name": "Material.001.material",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.14",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "280fb": {
+      "importer": "gltf-mesh",
+      "uuid": "200231c4-c489-4259-82de-4b9ad7fb10e3@280fb",
+      "displayName": "",
+      "id": "280fb",
+      "name": "Cube.067.mesh",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.1.0",
+      "imported": true,
+      "files": [
+        ".bin",
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "a7e28": {
+      "importer": "gltf-scene",
+      "uuid": "200231c4-c489-4259-82de-4b9ad7fb10e3@a7e28",
+      "displayName": "",
+      "id": "a7e28",
+      "name": "plank.prefab",
+      "userData": {
+        "gltfIndex": 0
+      },
+      "ver": "1.0.12",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "imageMetas": [],
+    "redirect": "200231c4-c489-4259-82de-4b9ad7fb10e3@a7e28",
+    "assetFinder": {
+      "meshes": [
+        "200231c4-c489-4259-82de-4b9ad7fb10e3@280fb"
+      ],
+      "skeletons": [],
+      "textures": [],
+      "materials": [
+        "200231c4-c489-4259-82de-4b9ad7fb10e3@99380"
+      ],
+      "scenes": [
+        "200231c4-c489-4259-82de-4b9ad7fb10e3@a7e28"
+      ]
+    }
+  }
+}
