@@ -26,7 +26,7 @@
     "fixedTimeStep": 0.016667,
     "maxSubSteps": 1,
     "gravity": {
-      "y": -10
+      "y": -20
     }
   }
 }

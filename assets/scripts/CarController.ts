@@ -1,4 +1,4 @@
-import { _decorator, Component, RigidBody, Vec3, Node, Prefab, instantiate, math, Quat, HingeConstraint, input, Input, KeyCode } from 'cc';
+import { _decorator, Component, RigidBody, Vec3, Node, Prefab, instantiate, math, Quat, HingeConstraint, input, Input, KeyCode, Collider, director, view } from 'cc';
 import { physics } from 'cc';
 const FixedConstraint = physics.FixedConstraint;
 const { ccclass, property } = _decorator;
@@ -89,9 +89,7 @@ export class CarController extends Component {
     }
 
     breakCar() {
-        // 1. Разрываем все HingeConstraint
         const hinges = this.getComponentsInChildren(HingeConstraint);
-
         for (const hinge of hinges) {
             hinge.destroy();
         }
@@ -99,13 +97,26 @@ export class CarController extends Component {
         // 2. Разрываем все FixedConstraint
         const fixedConstraints = this.getComponentsInChildren(FixedConstraint);
         for (const fc of fixedConstraints) {
-            fc.destroy()
+            this.node.removeComponent(fc); // Используем removeComponent
         }
 
-        //3. Убираем заморозку осей для всех частей
-        const rigidbodies = this.getComponentsInChildren(RigidBody);
-        for (const rb of rigidbodies) {
-            rb.wakeUp() // Разрешаем вращение по всем осям
-        }
+        // 3. Выполняем на следующем кадре
+        this.scheduleOnce(() => {
+            const rigidbodies = this.getComponentsInChildren(RigidBody);
+            for (const rb of rigidbodies) {
+                rb.wakeUp();
+                rb.useGravity = true
+                rb.applyForce(new Vec3(0, -10, 0));
+            }
+
+            /*// Убеждаемся, что коллайдеры включены
+            const colliders = this.getComponentsInChildren(Collider);
+            for (const collider of colliders) {
+                collider.enabled = true;
+            }*/
+
+            // Обновляем сцену для применения изменений
+            //director.getScene().updateWorld();
+        }, 0);
     }
 }

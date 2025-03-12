@@ -4,18 +4,21 @@ const { ccclass, property } = _decorator;
 @ccclass('BridgeSegment')
 export class BridgeSegment extends Component {
     @property(RigidBody) rigidBody: RigidBody = null;
-    @property(HingeConstraint) joint: HingeConstraint = null;
-    @property({ type: Number }) destroyDelay: number = 3; // Время до разрушения
+    @property({ type: Number }) destroyDelay: number = 0.5; // Время до разрушения
+
+    index: number = null;
     
     private isTriggered: boolean = false;
     private isDestroyed: boolean = false;
 
     onLoad() {
+        this.rigidBody.type = ERigidBodyType.KINEMATIC;
         const collider = this.getComponent(Collider);
         collider?.on('onCollisionEnter', this.onFirstTouch, this);
     }
 
-    onFirstTouch() {
+    onFirstTouch(event: any) {
+        if(event.otherCollider.node.name === 'Road_platform') return;
         if (this.isTriggered) return;
         this.isTriggered = true;
 
@@ -24,24 +27,19 @@ export class BridgeSegment extends Component {
 
     destroySegment() {
         if (this.isDestroyed) return;
-        console.log(55)
         this.isDestroyed = true;
-
-        // Удаляем соединение
-        if (isValid(this.joint)) {
-            this.joint.destroy();
-            this.joint = null!;
-        }
 
         // Активируем физику
         if (isValid(this.rigidBody)) {
             this.rigidBody.type = ERigidBodyType.DYNAMIC;
             this.rigidBody.wakeUp(); // Используем прямой метод
+            this.rigidBody.useGravity = true
+            this.rigidBody.applyForce(new Vec3(0, -10, 0));
         }
 
         // Удаление через 5 секунд
         this.scheduleOnce(() => {
             isValid(this.node) && this.node.destroy();
-        }, 5);
+        }, 3);
     }
 }

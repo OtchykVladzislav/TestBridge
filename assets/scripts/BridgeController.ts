@@ -1,4 +1,5 @@
 import { _decorator, Component, Node, instantiate, Prefab, Vec3, RigidBody, math, HingeConstraint, Camera } from 'cc';
+import { BridgeSegment } from './BridgeSegment';
 const { ccclass, property } = _decorator;
 
 @ccclass('BridgeController')
@@ -24,6 +25,11 @@ export class BridgeController extends Component {
 
     buildBridge() {
         let prevSegment: Node = null;
+
+        let startIndex: number = Math.floor(this.segmentCount * 0.7);
+
+        console.log(startIndex)
+
         for (let i = 0; i < this.segmentCount; i++) {
             let segment = instantiate(this.bridgeSegmentPrefab);
             this.node.addChild(segment);
@@ -38,10 +44,9 @@ export class BridgeController extends Component {
             const y = primaryWave * sizeVariation;
 
             segment.setPosition(new Vec3(x, y, segment.position.z));
-            
-            if (prevSegment) {
-                let joint = segment.addComponent(HingeConstraint);
-                joint.connectedBody = prevSegment.getComponent(RigidBody);
+
+            if(startIndex <= i){
+                segment.getComponent(BridgeSegment).destroyDelay = 0
             }
 
             this.segments.push(segment);
