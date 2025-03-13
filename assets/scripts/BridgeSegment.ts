@@ -24,7 +24,7 @@ export class BridgeSegment extends Component {
     onFirstTouch(event: any) {
         if(event.otherCollider.node.name === 'Road_platform') return;
 
-        if(this.isDestroyed) this.carController.breakCar()
+        if(this.isDestroyed && this.carController) this.carController.breakCar()
 
         if (this.isTriggered) return;
         this.isTriggered = true;

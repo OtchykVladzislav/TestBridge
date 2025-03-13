@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Vec3, EventTouch, tween, Tween, AudioSource } from 'cc';
+import { _decorator, Component, Node, Vec3, EventTouch, tween, Tween, AudioSource, isValid } from 'cc';
 import { CarController } from './CarController';
 import { SoundManager } from './SoundManager';
 const { ccclass, property } = _decorator;
@@ -68,7 +68,7 @@ export class LeverController extends Component {
     }
 
     updateCarSpeed() {
-        if (this.car) {
+        if (isValid(this.car)) {
             let carController = this.car.getComponent(CarController);
             if (carController) {
                 carController.setSpeed(this.leverValue * carController.maxSpeed);
