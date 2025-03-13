@@ -1,4 +1,5 @@
 import { _decorator, Component, RigidBody, Vec3, Collider, HingeConstraint, ERigidBodyType, MeshRenderer, isValid } from 'cc';
+import { CarController } from './CarController';
 const { ccclass, property } = _decorator;
 
 @ccclass('BridgeSegment')
@@ -6,10 +7,13 @@ export class BridgeSegment extends Component {
     @property(RigidBody) rigidBody: RigidBody = null;
     @property({ type: Number }) destroyDelay: number = 0.5; // Время до разрушения
 
+    carController: CarController = null
+
     index: number = null;
     
     private isTriggered: boolean = false;
     private isDestroyed: boolean = false;
+    public isWaitDestroyed: boolean = false;
 
     onLoad() {
         this.rigidBody.type = ERigidBodyType.KINEMATIC;
@@ -19,6 +23,9 @@ export class BridgeSegment extends Component {
 
     onFirstTouch(event: any) {
         if(event.otherCollider.node.name === 'Road_platform') return;
+
+        if(this.isDestroyed) this.carController.breakCar()
+
         if (this.isTriggered) return;
         this.isTriggered = true;
 
@@ -26,8 +33,10 @@ export class BridgeSegment extends Component {
     }
 
     destroySegment() {
-        if (this.isDestroyed) return;
-        this.isDestroyed = true;
+        if (this.isWaitDestroyed) return;
+        this.isWaitDestroyed = true
+
+        setTimeout(() => this.isDestroyed = true, 200)
 
         // Активируем физику
         if (isValid(this.rigidBody)) {

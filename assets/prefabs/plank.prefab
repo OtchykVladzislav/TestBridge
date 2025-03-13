@@ -196,7 +196,7 @@
     "rigidBody": {
       "__id__": 9
     },
-    "destroyDelay": 0.3,
+    "destroyDelay": 1.5,
     "_id": ""
   },
   {

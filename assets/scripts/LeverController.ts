@@ -1,9 +1,11 @@
-import { _decorator, Component, Node, Vec3, EventTouch, tween, Tween } from 'cc';
+import { _decorator, Component, Node, Vec3, EventTouch, tween, Tween, AudioSource } from 'cc';
 import { CarController } from './CarController';
+import { SoundManager } from './SoundManager';
 const { ccclass, property } = _decorator;
 
 @ccclass('LeverController')
 export class LeverController extends Component {
+    @property(SoundManager) soundManager: SoundManager = null;
     @property(Node) car: Node = null;
     @property(Node) leverHandle: Node = null;
     @property(Node) hand: Node = null;
@@ -15,8 +17,13 @@ export class LeverController extends Component {
     private leverValue: number = 0;
 
     TutorialTimeout: any = null;
+        
+    soundSource = new AudioSource();
 
     start() {
+        this.soundSource.loop = true
+        this.soundSource.clip = this.soundManager.carSound
+        
         this.hand.active = false
         this.node.on(Node.EventType.TOUCH_START, this.onTouchStart, this);
         this.node.on(Node.EventType.TOUCH_MOVE, this.onTouchMove, this);
@@ -27,6 +34,8 @@ export class LeverController extends Component {
     }
 
     onTouchStart(){
+        this.soundSource.play()
+
         this.isDragging = true;
 
         this.hideTutorial()
@@ -45,6 +54,7 @@ export class LeverController extends Component {
     }
 
     onTouchEnd() {
+        this.soundSource.pause()
         this.isDragging = false;
         // Возвращаем рычаг в середину плавно
         tween(this.leverHandle)

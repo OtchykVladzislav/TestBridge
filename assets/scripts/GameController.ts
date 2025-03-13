@@ -43,6 +43,7 @@ export class GameController extends Component {
 
         this.soundManager.playMusic(this.soundManager.failSound)
 
+        this.ui_cta.active = true
         end_screen.enabled = true
 
         target.game_end()

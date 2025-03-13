@@ -1,11 +1,14 @@
-import { _decorator, Component, RigidBody, Vec3, Node, Prefab, instantiate, math, Quat, HingeConstraint, input, Input, KeyCode, Collider, director, view } from 'cc';
+import { _decorator, Component, RigidBody, Vec3, Node, Prefab, instantiate, math, Quat, HingeConstraint, input, Input, KeyCode, Collider, director, view, BoxCollider, CylinderCollider } from 'cc';
 import { physics } from 'cc';
+import { GameController } from './GameController';
 const FixedConstraint = physics.FixedConstraint;
 const { ccclass, property } = _decorator;
 
 @ccclass('CarController')
 export class CarController extends Component {
+    @property(GameController) gameController: GameController = null;
     @property(Node) camera: Node = null;
+    @property(Prefab) explodeBody: Prefab = null;
     @property([RigidBody]) wheels: RigidBody[] = [];
     @property(Number) acceleration: number = 10;
     @property(Number) maxSpeed: number = 50;
@@ -14,6 +17,7 @@ export class CarController extends Component {
     private currentSpeed: number = 0;
     private targetSpeed: number = 0;
     private initialCameraOffsetX: number = 0;
+    private destroyed: boolean = false
 
     start() {
         // Сохраняем начальное смещение камеры относительно машинки
@@ -22,13 +26,6 @@ export class CarController extends Component {
             const carPos = this.node.worldPosition;
             this.initialCameraOffsetX = cameraPos.x - carPos.x;
         }
-
-        input.on(Input.EventType.KEY_DOWN, (event: any) => {
-            console.log(event)
-            if (event.keyCode === KeyCode.KEY_R) { // R - разрушить
-                this.breakCar();
-            }
-        });
     }
 
     setSpeed(value: number) {
@@ -36,13 +33,18 @@ export class CarController extends Component {
     }
 
     update(deltaTime: number) {
+        if(this.destroyed) return;
+
         this.currentSpeed = math.lerp(this.currentSpeed, this.targetSpeed, this.acceleration * deltaTime);
     
         this.wheels.map(e => { 
             e.applyTorque(new Vec3(0, 0, -this.currentSpeed))
+            //this.rotateWheel(e.node)
         })
 
-        this.moveCamera(deltaTime)
+        if(this.wheels[0].node.worldPosition.y < -5) this.breakCar()
+
+        if(!this.destroyed) this.moveCamera(deltaTime)
 
         this.rotatePropeller()
     }
@@ -76,6 +78,23 @@ export class CarController extends Component {
         return (1 - t) * start + t * end;
     }
 
+    rotateWheel(e: Node) {
+        // Скорость вращения (в радианах)
+        const rotationSpeed = this.currentSpeed * Math.PI / 180; 
+        
+        // Создаем кватернион вращения вокруг оси Z
+        const deltaRotation = Quat.fromAxisAngle(new Quat(), Vec3.FORWARD, rotationSpeed);
+        
+        // Получаем текущую глобальную ротацию
+        const currentRotation = e.worldRotation.clone();
+        
+        // Применяем вращение
+        Quat.multiply(currentRotation, currentRotation, deltaRotation);
+        
+        // Устанавливаем новую ротацию
+        e.setWorldRotation(currentRotation);
+    }
+
     rotatePropeller() {
         if(!this.propeller) return;
 
@@ -88,35 +107,38 @@ export class CarController extends Component {
         this.propeller.setWorldRotation(currentRotation);
     }
 
+    copyChildrenTransforms(sourceParent: Node, targetParent: Node) {
+        // Проверяем одинаковое количество детей
+        if (sourceParent.children.length !== targetParent.children.length) {
+            console.error("Объекты имеют разное количество дочерних элементов!");
+            return;
+        }
+    
+        // Копируем трансформации для каждого ребёнка
+        for (let i = 0; i < sourceParent.children.length; i++) {
+            const sourceChild = sourceParent.children[i];
+            const targetChild = targetParent.children[i];
+    
+            // Копируем позицию, поворот и масштаб
+            targetChild.position = sourceChild.position.clone();
+            targetChild.rotation = sourceChild.rotation.clone();
+            targetChild.scale = sourceChild.scale.clone();
+        }
+    }
+
     breakCar() {
-        const hinges = this.getComponentsInChildren(HingeConstraint);
-        for (const hinge of hinges) {
-            hinge.destroy();
-        }
+        if(this.destroyed) return;
 
-        // 2. Разрываем все FixedConstraint
-        const fixedConstraints = this.getComponentsInChildren(FixedConstraint);
-        for (const fc of fixedConstraints) {
-            this.node.removeComponent(fc); // Используем removeComponent
-        }
+        this.destroyed = true
 
-        // 3. Выполняем на следующем кадре
-        this.scheduleOnce(() => {
-            const rigidbodies = this.getComponentsInChildren(RigidBody);
-            for (const rb of rigidbodies) {
-                rb.wakeUp();
-                rb.useGravity = true
-                rb.applyForce(new Vec3(0, -10, 0));
-            }
+        this.gameController.transferToCTA()
 
-            /*// Убеждаемся, что коллайдеры включены
-            const colliders = this.getComponentsInChildren(Collider);
-            for (const collider of colliders) {
-                collider.enabled = true;
-            }*/
+        const object = instantiate(this.explodeBody)
 
-            // Обновляем сцену для применения изменений
-            //director.getScene().updateWorld();
-        }, 0);
+        this.copyChildrenTransforms(this.node, object);
+
+        const parent = this.node.parent;
+        parent?.addChild(object);
+        this.node.destroy();
     }
 }

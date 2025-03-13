@@ -1,9 +1,11 @@
-import { _decorator, Component, Node, instantiate, Prefab, Vec3, RigidBody, math, HingeConstraint, Camera } from 'cc';
+import { _decorator, Component, Node, instantiate, Prefab, Vec3, RigidBody, math, HingeConstraint, Camera, isValid } from 'cc';
 import { BridgeSegment } from './BridgeSegment';
+import { CarController } from './CarController';
 const { ccclass, property } = _decorator;
 
 @ccclass('BridgeController')
 export class BridgeController extends Component {
+    @property(CarController) carController: CarController = null;
     @property(Prefab) bridgeSegmentPrefab: Prefab = null;
     @property(Number) segmentCount: number = 150;
     @property(Number) segmentSpacing: number = 1;
@@ -24,15 +26,13 @@ export class BridgeController extends Component {
     }
 
     buildBridge() {
-        let prevSegment: Node = null;
-
         let startIndex: number = Math.floor(this.segmentCount * 0.7);
-
-        console.log(startIndex)
 
         for (let i = 0; i < this.segmentCount; i++) {
             let segment = instantiate(this.bridgeSegmentPrefab);
             this.node.addChild(segment);
+
+            let component = segment.getComponent(BridgeSegment)
 
             let x = i * this.segmentSpacing;
             const primaryWave = Math.sin(i * this.primaryWaveFrequency) * this.waveAmplitude;
@@ -46,19 +46,34 @@ export class BridgeController extends Component {
             segment.setPosition(new Vec3(x, y, segment.position.z));
 
             if(startIndex <= i){
-                segment.getComponent(BridgeSegment).destroyDelay = 0
+                component.destroyDelay = 0
             }
 
+            component.carController = this.carController
+
             this.segments.push(segment);
-            prevSegment = segment;
         }
     }
 
-    destroyBridgeSegment(index: number) {
-        if (index >= 0 && index < this.segments.length) {
-            let segment = this.segments[index];
-            this.segments.splice(index, 1);
-            segment.destroy();
+    update(dt: number): void {
+        this.checkSegments()
+    }
+
+    checkSegments(){
+        let segments_component = this.segments.map(e => {if(isValid(e)) return e.getComponent(BridgeSegment)}).reverse()
+        let check_status = false
+
+        for(let i = 0; i < segments_component.length; i++){
+            let elem = segments_component[i]
+
+            if(elem){
+                if(elem.isWaitDestroyed && !check_status) check_status = true
+
+                if(check_status && !elem.isWaitDestroyed){
+                    elem.destroySegment()
+                }
+            }            
         }
     }
+
 }
