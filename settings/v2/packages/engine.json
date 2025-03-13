@@ -33,7 +33,7 @@
         "_value": true
       },
       "particle": {
-        "_value": true
+        "_value": false
       },
       "physics": {
         "_value": true,
@@ -130,7 +130,6 @@
       "audio",
       "base",
       "gfx-webgl",
-      "particle",
       "physics-cannon",
       "primitive",
       "skeletal-animation",
