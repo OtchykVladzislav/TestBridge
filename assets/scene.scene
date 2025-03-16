@@ -85,7 +85,7 @@
     },
     "autoReleaseAssets": false,
     "_globals": {
-      "__id__": 217
+      "__id__": 219
     },
     "_id": "371e9379-1833-48f8-abee-85bde2ab3916"
   },
@@ -4281,6 +4281,9 @@
       },
       {
         "__id__": 214
+      },
+      {
+        "__id__": 217
       }
     ],
     "nestedPrefabInstanceRoots": [
@@ -4664,24 +4667,46 @@
     ]
   },
   {
+    "__type__": "cc.TargetOverrideInfo",
+    "source": {
+      "__id__": 143
+    },
+    "sourceInfo": null,
+    "propertyPath": [
+      "carController"
+    ],
+    "target": {
+      "__id__": 20
+    },
+    "targetInfo": {
+      "__id__": 218
+    }
+  },
+  {
+    "__type__": "cc.TargetInfo",
+    "localID": [
+      "c6ZhkKVg5HH47UJPNBBatV"
+    ]
+  },
+  {
     "__type__": "cc.SceneGlobals",
     "ambient": {
-      "__id__": 218
-    },
-    "shadows": {
-      "__id__": 219
-    },
-    "_skybox": {
       "__id__": 220
     },
-    "fog": {
+    "shadows": {
       "__id__": 221
     },
-    "octree": {
+    "_skybox": {
       "__id__": 222
     },
-    "lightProbeInfo": {
+    "fog": {
       "__id__": 223
+    },
+    "octree": {
+      "__id__": 224
+    },
+    "lightProbeInfo": {
+      "__id__": 225
     },
     "bakedWithStationaryMainLight": false,
     "bakedWithHighpLightmap": false

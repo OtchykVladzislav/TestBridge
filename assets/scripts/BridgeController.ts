@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, instantiate, Prefab, Vec3, RigidBody, math, HingeConstraint, Camera, isValid } from 'cc';
+import { _decorator, Component, Node, instantiate, Prefab, Vec3, RigidBody, math, HingeConstraint, Camera, isValid, CCBoolean } from 'cc';
 import { BridgeSegment } from './BridgeSegment';
 import { CarController } from './CarController';
 const { ccclass, property } = _decorator;
@@ -14,6 +14,8 @@ export class BridgeController extends Component {
     @property(Number) secondaryWaveAmplitude: number = 0.3; // Амплитуда вторичной волны
     @property(Number) secondaryWaveFrequency: number = 0.05;
     @property(Node) secondRoad: Node = null;
+
+    @property(CCBoolean) isModified: boolean = false
 
     public segments: Node[] = [];
 
@@ -43,10 +45,14 @@ export class BridgeController extends Component {
             // Комбинированная высота
             const y = primaryWave * sizeVariation;
 
-            segment.setPosition(new Vec3(x, y, segment.position.z));
+            segment.setPosition(new Vec3(x, this.isModified ? y : 0, segment.position.z));
 
             if(startIndex <= i){
                 component.destroyDelay = 0
+            } else {
+                let value = component.destroyDelay
+                if(!this.isModified) component.destroyDelay = Math.max(0, value - 1)
+                console.log(component.destroyDelay)
             }
 
             component.carController = this.carController
